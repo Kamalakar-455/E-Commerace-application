@@ -1,23 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './Context/auth';
-import { CartProvider } from './Context/cartHandler';
+import express from'express';
+import mongoose from 'mongoose';
+import newEmployeeRouter from'./routes/addEmployeeservice.js'
+import getEmployeeRouter from'./routes/getEmployee.js'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
 
-reportWebVitals();
+const app = express();
+
+//middle ware logic
+app.use(express.json());
+app.use(express.urlencoded({extended:true}))
+
+
+//how to connect mongodb
+mongoose.connect("mongodb://127.0.0.1:27017/erp")
+.then(()=>console.log("database connected"))
+.catch((err)=>console.log(err));
+app.use("/add",newEmployeeRouter);
+app.use("/get",getEmployeeRouter);
+
+//server logic
+app.listen(4000,
+    ()=>console.log("server running on port 4000"));
+
+    
